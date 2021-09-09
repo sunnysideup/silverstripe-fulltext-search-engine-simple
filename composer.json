@@ -1,0 +1,36 @@
+{
+  "name": "sunnysideup/fulltext-search-engine-simple",
+  "type": "silverstripe-vendormodule",
+  "description": "Basic fulltext search similar to the Silverstripe Core FullText Search Engine but standalone API.",
+  "keywords": [
+    "Silverstripe-CMS",
+    "CMS",
+    "Silverstripe",
+    "link",
+    "fulltext",
+    "full-text",
+    "search",
+    "match",
+    "mysql"
+  ],
+  "require": {
+    "silverstripe/framework": "^4.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Nicolaas Francken",
+      "email": "modules@sunnysideup.co.nz",
+      "role": "lead developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Sunnysideup\\FulltextSearchEngineSimple\\": "src/"
+    }
+  },
+  "suggested": {
+  }
+}
