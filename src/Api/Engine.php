@@ -1,10 +1,10 @@
 <?php
 
-
 namespace Sunnysideup\FulltextSearchEngineSimple\Api;
 
 class Engine
 {
+    public $classesToSearch;
 
     public function getMatches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $pageLenth = 1000)
     {
@@ -15,24 +15,24 @@ class Engine
             return ' -' . $matches[3];
         };
 
-        $keywords = preg_replace_callback('/()("[^()"]+")( and )("[^"()]+")()/i', $andProcessor, $keywords);
-        $keywords = preg_replace_callback('/(^| )([^() ]+)( and )([^ ()]+)( |$)/i', $andProcessor, $keywords);
-        $keywords = preg_replace_callback('/(^| )(not )("[^"()]+")/i', $notProcessor, $keywords);
-        $keywords = preg_replace_callback('/(^| )(not )([^() ]+)( |$)/i', $notProcessor, $keywords);
+        $keywords = preg_replace_callback('#()("[^()"]+")( and )("[^"()]+")()#i', $andProcessor, $keywords);
+        $keywords = preg_replace_callback('#(^| )([^() ]+)( and )([^ ()]+)( |$)#i', $andProcessor, $keywords);
+        $keywords = preg_replace_callback('#(^| )(not )("[^"()]+")#i', $notProcessor, $keywords);
+        $keywords = preg_replace_callback('#(^| )(not )([^() ]+)( |$)#i', $notProcessor, $keywords);
 
         $keywords = $this->addStarsToKeywords($keywords);
 
         $booleanSearch =
-            strpos($keywords, '"') !== false ||
-            strpos($keywords, '+') !== false ||
-            strpos($keywords, '-') !== false ||
-            strpos($keywords, '*') !== false;
-        $results = DB::get_conn()->searchEngine($this->classesToSearch, $keywords, $start, $pageLength, "\"Relevance\" DESC", "", $booleanSearch);
+            false !== strpos($keywords, '"') ||
+            false !== strpos($keywords, '+') ||
+            false !== strpos($keywords, '-') ||
+            false !== strpos($keywords, '*');
+        $results = DB::get_conn()->searchEngine($this->classesToSearch, $keywords, $start, $pageLength, '"Relevance" DESC', '', $booleanSearch);
 
         // filter by permission
         if ($results) {
             foreach ($results as $result) {
-                if (!$result->canView()) {
+                if (! $result->canView()) {
                     $results->remove($result);
                 }
             }
@@ -41,22 +41,21 @@ class Engine
         return $results;
     }
 
-
     protected function addStarsToKeywords(string $keywords)
     {
-        if (!trim($keywords)) {
-            return "";
+        if (! trim($keywords)) {
+            return '';
         }
         // Add * to each keyword
-        $splitWords = preg_split("/ +/", trim($keywords));
+        $splitWords = preg_split('# +#', trim($keywords));
         $newWords = [];
-        for ($i = 0; $i < count($splitWords); $i++) {
-            $word = $splitWords[$i];
-            if ($word[0] == '"') {
+        foreach ($splitWords as $i => $splitWord) {
+            $word = $splitWord;
+            if ('"' === $word[0]) {
                 while (++$i < count($splitWords)) {
-                    $subword = $splitWords[$i];
+                    $subword = $splitWord;
                     $word .= ' ' . $subword;
-                    if (substr($subword, -1) == '"') {
+                    if ('"' === substr($subword, -1)) {
                         break;
                     }
                 }
@@ -65,6 +64,7 @@ class Engine
             }
             $newWords[] = $word;
         }
-        return implode(" ", $newWords);
+
+        return implode(' ', $newWords);
     }
 }
