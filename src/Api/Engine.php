@@ -1,12 +1,14 @@
 <?php
 
 namespace Sunnysideup\FulltextSearchEngineSimple\Api;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Assets\File;
+use SilverStripe\ORM\DB;
 
 class Engine
 {
-    public $classesToSearch;
 
-    public function getMatches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $pageLenth = 1000)
+    public function getMatches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $start = 0, ?int $pageLength = 1000)
     {
         $andProcessor = function ($matches) {
             return ' +' . $matches[2] . ' +' . $matches[4] . ' ';
@@ -27,7 +29,7 @@ class Engine
             false !== strpos($keywords, '+') ||
             false !== strpos($keywords, '-') ||
             false !== strpos($keywords, '*');
-        $results = DB::get_conn()->searchEngine($this->classesToSearch, $keywords, $start, $pageLength, '"Relevance" DESC', '', $booleanSearch);
+        $results = DB::get_conn()->searchEngine($classesToSearch, $keywords, $start, $pageLength, '"Relevance" DESC', '', $booleanSearch);
 
         // filter by permission
         if ($results) {
