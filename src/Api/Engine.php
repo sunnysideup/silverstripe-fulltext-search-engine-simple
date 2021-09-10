@@ -8,7 +8,7 @@ use SilverStripe\ORM\DB;
 class Engine
 {
 
-    public function getMatches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $start = 0, ?int $pageLength = 1000)
+    public static function get_matches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $start = 0, ?int $pageLength = 1000)
     {
         $andProcessor = function ($matches) {
             return ' +' . $matches[2] . ' +' . $matches[4] . ' ';
@@ -22,7 +22,7 @@ class Engine
         $keywords = preg_replace_callback('#(^| )(not )("[^"()]+")#i', $notProcessor, $keywords);
         $keywords = preg_replace_callback('#(^| )(not )([^() ]+)( |$)#i', $notProcessor, $keywords);
 
-        $keywords = $this->addStarsToKeywords($keywords);
+        $keywords = self::add_stars_to_keywords($keywords);
 
         $booleanSearch =
             false !== strpos($keywords, '"') ||
@@ -43,7 +43,7 @@ class Engine
         return $results;
     }
 
-    protected function addStarsToKeywords(string $keywords)
+    protected static function add_stars_to_keywords(string $keywords)
     {
         if (! trim($keywords)) {
             return '';
