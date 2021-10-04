@@ -1,13 +1,13 @@
 <?php
 
 namespace Sunnysideup\FulltextSearchEngineSimple\Api;
-use SilverStripe\CMS\Model\SiteTree;
+
 use SilverStripe\Assets\File;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\ORM\DB;
 
 class Engine
 {
-
     public static function get_matches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $start = 0, ?int $pageLength = 1000)
     {
         $andProcessor = function ($matches) {
