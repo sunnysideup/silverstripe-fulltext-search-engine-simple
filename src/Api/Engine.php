@@ -10,25 +10,38 @@ class Engine
 {
     public static function get_matches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $start = 0, ?int $pageLength = 1000)
     {
-        $andProcessor = function ($matches) {
-            return ' +' . $matches[2] . ' +' . $matches[4] . ' ';
-        };
-        $notProcessor = function ($matches) {
-            return ' -' . $matches[3];
-        };
-
-        $keywords = preg_replace_callback('#()("[^()"]+")( and )("[^"()]+")()#i', $andProcessor, $keywords);
-        $keywords = preg_replace_callback('#(^| )([^() ]+)( and )([^ ()]+)( |$)#i', $andProcessor, $keywords);
-        $keywords = preg_replace_callback('#(^| )(not )("[^"()]+")#i', $notProcessor, $keywords);
-        $keywords = preg_replace_callback('#(^| )(not )([^() ]+)( |$)#i', $notProcessor, $keywords);
-
-        $keywords = self::add_stars_to_keywords($keywords);
-
-        $booleanSearch =
+        $booleanSearchAtAtll =
+            false !== strpos($keywords, ' and ') ||
+            false !== strpos($keywords, ' not ') ||
+            false !== strpos($keywords, '-') ||
             false !== strpos($keywords, '"') ||
             false !== strpos($keywords, '+') ||
             false !== strpos($keywords, '-') ||
             false !== strpos($keywords, '*');
+        if($booleanSearchAtAtll) {
+            $andProcessor = function ($matches) {
+                return ' +' . $matches[2] . ' +' . $matches[4] . ' ';
+            };
+            $notProcessor = function ($matches) {
+                return ' -' . $matches[3];
+            };
+
+            $keywords = preg_replace_callback('#()("[^()"]+")( and )("[^"()]+")()#i', $andProcessor, $keywords);
+            $keywords = preg_replace_callback('#(^| )([^() ]+)( and )([^ ()]+)( |$)#i', $andProcessor, $keywords);
+            $keywords = preg_replace_callback('#(^| )(not )("[^"()]+")#i', $notProcessor, $keywords);
+            $keywords = preg_replace_callback('#(^| )(not )([^() ]+)( |$)#i', $notProcessor, $keywords);
+            $booleanSearch =
+                false !== strpos($keywords, '"') ||
+                false !== strpos($keywords, '+') ||
+                false !== strpos($keywords, '-') ||
+                false !== strpos($keywords, '*');
+            
+        } else {
+            $booleanSearch = false;
+        }
+        
+        $keywords = self::add_stars_to_keywords($keywords);
+
         $results = DB::get_conn()->searchEngine($classesToSearch, $keywords, $start, $pageLength, '"Relevance" DESC', '', $booleanSearch);
 
         // filter by permission
