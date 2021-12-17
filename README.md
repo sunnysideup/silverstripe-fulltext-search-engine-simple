@@ -1,4 +1,4 @@
-# Silverstripe Avoid Child Deletion module
+# Silverstripe Fulltext Search Engine SUPER Simple
 [![Build Status](https://travis-ci.org/sunnysideup/silverstripe-fulltext-search-engine-simple.svg?branch=master)](https://travis-ci.org/sunnysideup/silverstripe-fulltext-search-engine-simple)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sunnysideup/silverstripe-fulltext-search-engine-simple/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/sunnysideup/silverstripe-fulltext-search-engine-simple/?branch=master)
 [![codecov.io](https://codecov.io/github/sunnysideup/silverstripe-fulltext-search-engine-simple/coverage.svg?branch=master)](https://codecov.io/github/sunnysideup/silverstripe-fulltext-search-engine-simple?branch=master)
