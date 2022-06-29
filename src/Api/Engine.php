@@ -18,7 +18,7 @@ class Engine
             false !== strpos($keywords, '+') ||
             false !== strpos($keywords, '-') ||
             false !== strpos($keywords, '*');
-        if($booleanSearchAtAtll) {
+        if ($booleanSearchAtAtll) {
             $andProcessor = function ($matches) {
                 return ' +' . $matches[2] . ' +' . $matches[4] . ' ';
             };
@@ -35,11 +35,10 @@ class Engine
                 false !== strpos($keywords, '+') ||
                 false !== strpos($keywords, '-') ||
                 false !== strpos($keywords, '*');
-            
         } else {
             $booleanSearch = false;
         }
-        
+
         $keywords = self::add_stars_to_keywords($keywords);
 
         $results = DB::get_conn()->searchEngine($classesToSearch, $keywords, $start, $pageLength, '"Relevance" DESC', '', $booleanSearch);
@@ -61,6 +60,7 @@ class Engine
         if (! trim($keywords)) {
             return '';
         }
+
         // Add * to each keyword
         $splitWords = preg_split('# +#', trim($keywords));
         $newWords = [];
@@ -77,6 +77,7 @@ class Engine
             } else {
                 $word .= '*';
             }
+
             $newWords[] = $word;
         }
 
