@@ -57,7 +57,7 @@ class Engine
 
     protected static function add_stars_to_keywords(string $keywords)
     {
-        if (! trim($keywords)) {
+        if (trim($keywords) === '' || trim($keywords) === '0') {
             return '';
         }
 
