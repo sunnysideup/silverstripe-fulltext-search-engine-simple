@@ -11,30 +11,26 @@ class Engine
     public static function get_matches(string $keywords, ?array $classesToSearch = [SiteTree::class, File::class], ?int $start = 0, ?int $pageLength = 1000)
     {
         $booleanSearchAtAtll =
-            false !== strpos($keywords, ' and ') ||
-            false !== strpos($keywords, ' not ') ||
-            false !== strpos($keywords, '-') ||
-            false !== strpos($keywords, '"') ||
-            false !== strpos($keywords, '+') ||
-            false !== strpos($keywords, '-') ||
-            false !== strpos($keywords, '*');
+            str_contains($keywords, ' and ') ||
+            str_contains($keywords, ' not ') ||
+            str_contains($keywords, '-') ||
+            str_contains($keywords, '"') ||
+            str_contains($keywords, '+') ||
+            str_contains($keywords, '-') ||
+            str_contains($keywords, '*');
         if ($booleanSearchAtAtll) {
-            $andProcessor = function ($matches) {
-                return ' +' . $matches[2] . ' +' . $matches[4] . ' ';
-            };
-            $notProcessor = function ($matches) {
-                return ' -' . $matches[3];
-            };
+            $andProcessor = (fn($matches) => ' +' . $matches[2] . ' +' . $matches[4] . ' ');
+            $notProcessor = (fn($matches) => ' -' . $matches[3]);
 
             $keywords = preg_replace_callback('#()("[^()"]+")( and )("[^"()]+")()#i', $andProcessor, $keywords);
-            $keywords = preg_replace_callback('#(^| )([^() ]+)( and )([^ ()]+)( |$)#i', $andProcessor, $keywords);
-            $keywords = preg_replace_callback('#(^| )(not )("[^"()]+")#i', $notProcessor, $keywords);
-            $keywords = preg_replace_callback('#(^| )(not )([^() ]+)( |$)#i', $notProcessor, $keywords);
+            $keywords = preg_replace_callback('#(^| )([^() ]+)( and )([^ ()]+)( |$)#i', $andProcessor, (string) $keywords);
+            $keywords = preg_replace_callback('#(^| )(not )("[^"()]+")#i', $notProcessor, (string) $keywords);
+            $keywords = preg_replace_callback('#(^| )(not )([^() ]+)( |$)#i', $notProcessor, (string) $keywords);
             $booleanSearch =
-                false !== strpos($keywords, '"') ||
-                false !== strpos($keywords, '+') ||
-                false !== strpos($keywords, '-') ||
-                false !== strpos($keywords, '*');
+                str_contains((string) $keywords, '"') ||
+                str_contains((string) $keywords, '+') ||
+                str_contains((string) $keywords, '-') ||
+                str_contains((string) $keywords, '*');
         } else {
             $booleanSearch = false;
         }
@@ -70,7 +66,7 @@ class Engine
                 while (++$i < count($splitWords)) {
                     $subword = $splitWord;
                     $word .= ' ' . $subword;
-                    if ('"' === substr($subword, -1)) {
+                    if (str_ends_with($subword, '"')) {
                         break;
                     }
                 }

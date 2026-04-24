@@ -14,7 +14,7 @@
     "mysql"
   ],
   "require": {
-    "silverstripe/framework": "^4.0 || ^5.0"
+    "silverstripe/framework": "^6.0"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -31,5 +31,5 @@
       "Sunnysideup\\FulltextSearchEngineSimple\\": "src/"
     }
   },
-  "suggested": {}
+  "suggested": []
 }
